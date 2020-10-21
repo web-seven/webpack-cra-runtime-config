@@ -1,0 +1,28 @@
+{
+  "name": "webpack-cra-runtime-config",
+  "version": "1.0.0",
+  "description": "Webpack plugin for generate config from .env file, replaceable by server runtime.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "depencencies": {
+      
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/web-seven/webpack-cra-runtime-config.git"
+  },
+  "keywords": [
+    "react",
+    "runtime",
+    "config",
+    "cra"
+  ],
+  "author": "Web7",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/web-seven/webpack-cra-runtime-config/issues"
+  },
+  "homepage": "https://github.com/web-seven/webpack-cra-runtime-config#readme"
+}
