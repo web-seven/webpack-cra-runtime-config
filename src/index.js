@@ -1,9 +1,11 @@
 const fs = require('fs');
+const { dirname } = require('path');
 const tempdir = require('os').tmpdir();
 
 class CraRuntimeConfigPlugin {
 
     constructor(config = {}) {
+
         this.config = config;
         config.plugins.forEach((plugin) => {
             if (plugin.constructor.name == 'DefinePlugin') {
@@ -15,7 +17,11 @@ class CraRuntimeConfigPlugin {
                 let placeholders = {};
                 this.replacements = plugin.replacements;
                 Object.keys(this.replacements).forEach(key => {
-                    placeholders[key] = 'PLACEHOLDER_' + key;
+                    if(key.includes('REACT_')) {
+                        placeholders[key] = '$' + key;
+                    } else {
+                        placeholders[key] = plugin.replacements[key];
+                    }
                 })
 
                 fs.writeFile(
@@ -26,9 +32,6 @@ class CraRuntimeConfigPlugin {
                 config.entry.unshift(tempdir + '/config.js')
             }
         });
-    }
-
-    apply(compiler) {
 
         this.config.optimization.splitChunks = {
             chunks: 'all',
@@ -44,11 +47,14 @@ class CraRuntimeConfigPlugin {
                 }
             }
         }
+    }
+
+    apply(compiler) {
 
         compiler.hooks.emit.tapAsync('CraRuntimeConfigPlugin', (compilation, callback) => {
             compilation.chunks.forEach(chunk => {
                 if (chunk.name == 'config.js') {
-
+                    let entrypoint = fs.readFileSync(dirname(__filename) + '/entrypoint.sh').toString();
                     chunk.files.forEach(filename => {
                         let source = compilation.assets[filename].source();
                         const originalSource = source.slice();
@@ -63,24 +69,36 @@ class CraRuntimeConfigPlugin {
 
                         if (Object.keys(compilation.assets[filename]).includes('children')) {
                             Object.keys(this.replacements).forEach(key => {
-                                source = source.replace('\"PLACEHOLDER_' + key + '\"', this.definitions[key]);
+                                source = source.replace('$' + key, this.replacements[key]);
                             })
                             compilation.assets[filename].children[0]._value = source;
+                            entrypoint = entrypoint
+                                .replace('PLACEHOLDER_JS_DIST', filename+'.dist')
+                                .replace('PLACEHOLDER_JS', filename);
                         }
 
                         if (Object.keys(compilation.assets[filename]).includes('_value')) {
                             Object.keys(this.replacements).forEach(key => {
-                                let value = this.definitions[key];
-                                if (typeof value == 'string') {
-                                    value = value.replace(/"/gi, '\\"')
-                                }
-                                source = source.replace('\\"PLACEHOLDER_' + key + '\\"', value);
+                                let value = this.replacements[key];
+                                source = source.replace('$'+key, value);
                             })
                             compilation.assets[filename]._value = source;
+                            entrypoint = entrypoint
+                                .replace('PLACEHOLDER_MAP_DIST', filename+'.dist')
+                                .replace('PLACEHOLDER_MAP', filename);
                         }
 
-
                     });
+                    
+                    compilation.assets['entrypoint.sh'] = {
+                        source: function () {
+                            return entrypoint
+                        },
+                        size: function () {
+                            return entrypoint.length;
+                        }
+                    }
+                     
                 }
 
             });
@@ -90,4 +108,4 @@ class CraRuntimeConfigPlugin {
     }
 }
 
-export default CraRuntimeConfigPlugin;
+module.exports = CraRuntimeConfigPlugin;
