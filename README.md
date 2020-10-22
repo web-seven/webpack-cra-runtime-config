@@ -5,14 +5,6 @@
   </a>
 </div>
 
-[![npm][npm]][npm-url]
-[![node][node]][node-url]
-[![deps][deps]][deps-url]
-[![tests][tests]][tests-url]
-[![cover][cover]][cover-url]
-[![chat][chat]][chat-url]
-[![size][size]][size-url]
-
 # webpack-cra-runtime-plugin
 
 Generate runtime configuration chunk, with .env file values as default and replaceable on server for runtime.
