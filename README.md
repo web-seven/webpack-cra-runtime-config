@@ -6,8 +6,9 @@
 </div>
 
 # webpack-cra-runtime-plugin
-
-Generate runtime configuration chunk, with .env file values as default and replaceable on server for runtime.
+With this plugin you could still use `process.env` object in your production built application.
+Used `process.env.EVN_VAR` values not replaced in production build, but keep clean `process.env` object.
+For runtime configuration update, plugin generate configuration chunk `.dist` file with configuration values placeholders, which could be replaced on server side at runtime.
 
 ## Getting Started
 
@@ -37,13 +38,10 @@ module.exports = {
     ),
 }
 ```
-## Result:
-Plugin will generate `config.js` module and include it as first entry of application.
-On server side in this module replaced by `config.js.dist` where integrated environment variables with prefix `REACT_` 
-by `entrypoint.sh` script, which also generated and placed in `build` directory.
+Next just call generated helper script `build/entrypoint.sh`, which will update `REACT_` configuration values from environment variables in configuration module. 
+This is very useful when you use Docker containers, where posible just to call `entrypoint.sh` in ENTRYPOINT.
 
-## Dockerfile
-
+**Dockerfile**
 ```bash
 COPY ./build/entrypoint.sh /working-directory/entrypoint.sh
 RUN chmod -x /working-directory/entrypoint.sh
