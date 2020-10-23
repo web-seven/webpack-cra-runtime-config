@@ -89,6 +89,23 @@ class CraRuntimeConfigPlugin {
                         }
 
                     });
+
+                    let dotEnvContent = '';
+
+                    Object.keys(this.replacements).forEach(key=>{
+                        if(key.includes('REACT_')) {
+                            dotEnvContent += `${key}=${this.replacements[key]}\n`;
+                        }
+                    })
+
+                    compilation.assets['.env'] = {
+                        source: function () {
+                            return dotEnvContent
+                        },
+                        size: function () {
+                            return dotEnvContent.length;
+                        }
+                    }
                     
                     compilation.assets['entrypoint.sh'] = {
                         source: function () {
