@@ -5,9 +5,9 @@ for var in "${!REACT_@}"; do
     env_vars+="$var=|"
 done
 env_vars=${env_vars%|}
-export $(cat ./build/.env | grep -Ev "$env_vars" | xargs)
+export $(cat ./.env | grep -Ev "$env_vars" | xargs)
 envsubst < ./PLACEHOLDER_JS_DIST > ./PLACEHOLDER_JS
 envsubst < ./PLACEHOLDER_MAP_DIST > ./PLACEHOLDER_MAP
-rm -f ./build/.env
+rm -f ./.env
 
 exec "$@"
