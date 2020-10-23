@@ -17,7 +17,7 @@ class CraRuntimeConfigPlugin {
                 let placeholders = {};
                 this.replacements = plugin.replacements;
                 Object.keys(this.replacements).forEach(key => {
-                    if(key.includes('REACT_')) {
+                    if(key.includes('REACT_APP_')) {
                         placeholders[key] = '$' + key;
                     } else {
                         placeholders[key] = plugin.replacements[key];
@@ -93,7 +93,7 @@ class CraRuntimeConfigPlugin {
                     let dotEnvContent = '';
 
                     Object.keys(this.replacements).forEach(key=>{
-                        if(key.includes('REACT_')) {
+                        if(key.includes('REACT_APP_')) {
                             dotEnvContent += `${key}=${this.replacements[key]}\n`;
                         }
                     })

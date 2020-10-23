@@ -1,7 +1,7 @@
 #!/bin/bash
 
 env_vars=
-for var in "${!REACT_@}"; do
+for var in "${!REACT_APP_@}"; do
     env_vars+="$var=|"
 done
 env_vars=${env_vars%|}
