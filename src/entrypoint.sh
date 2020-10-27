@@ -1,6 +1,6 @@
 #!/bin/bash
 
-env_vars=
+env_vars="ENTRY_POINT_DUMMY=1|"
 for var in "${!REACT_APP_@}"; do
     env_vars+="$var=|"
 done
